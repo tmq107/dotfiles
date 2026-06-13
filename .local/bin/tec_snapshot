@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REGION="${REGION:-eu-central-1}"
+EXCLUDE_PATTERN="${EXCLUDE_PATTERN:-feature|restored}"
+REASON="${REASON:-before-deployment}"
+DRY_RUN="${DRY_RUN:-true}"
+
+CLUSTER_ID=$(
+  aws rds describe-db-clusters \
+    --region "$REGION" \
+    --query "DBClusters[*].[DBClusterIdentifier]" \
+    --output text |
+  grep -Ev "$EXCLUDE_PATTERN" |
+  fzf --header="Select Aurora cluster" |
+  awk '{print $1}'
+)
+
+if [ -z "$CLUSTER_ID" ]; then
+  echo "No cluster selected."
+  exit 1
+fi
+
+BASE_CLUSTER_ID=$(echo "$CLUSTER_ID" | sed -E 's/[0-9]{14,}$//')
+SNAPSHOT_ID="manual-${BASE_CLUSTER_ID}-$(date +%y%m%d)-${REASON}"
+
+echo "Region:      $REGION"
+echo "Cluster ID:  $CLUSTER_ID"
+echo "Snapshot ID: $SNAPSHOT_ID"
+echo
+
+if [ "$DRY_RUN" = true ]; then
+  echo "[DRY RUN] Would run:"
+  printf 'aws rds create-db-cluster-snapshot --region %q --db-cluster-identifier %q --db-cluster-snapshot-identifier %q\n' \
+    "$REGION" "$CLUSTER_ID" "$SNAPSHOT_ID"
+  exit 0
+fi
+
+echo "Creating snapshot: $SNAPSHOT_ID"
+START_TIME=$(date +%s)
+aws rds create-db-cluster-snapshot \
+  --region "$REGION" \
+  --db-cluster-identifier "$CLUSTER_ID" \
+  --db-cluster-snapshot-identifier "$SNAPSHOT_ID" > /dev/null
+
+echo "Snapshot creation started."
+echo "Checking snapshot status..."
+
+while true; do
+  STATUS=$(
+    aws rds describe-db-cluster-snapshots \
+      --region "$REGION" \
+      --db-cluster-snapshot-identifier "$SNAPSHOT_ID" \
+      --query "DBClusterSnapshots[0].Status" \
+      --output text
+  )
+
+  NOW=$(date '+%Y-%m-%d %H:%M:%S')
+  echo "$NOW - Snapshot status: $STATUS"
+
+  if [ "$STATUS" = "available" ]; then
+    END_TIME=$(date +%s)
+    DURATION=$((END_TIME - START_TIME))
+
+    MINUTES=$((DURATION / 60))
+    SECONDS=$((DURATION % 60))
+
+    echo
+    echo "Snapshot is available: $SNAPSHOT_ID"
+    echo "Total time: ${MINUTES}m ${SECONDS}s"
+    break
+  fi
+
+  if [ "$STATUS" = "failed" ]; then
+    END_TIME=$(date +%s)
+    DURATION=$((END_TIME - START_TIME))
+
+    MINUTES=$((DURATION / 60))
+    SECONDS=$((DURATION % 60))
+
+    echo
+    echo "Snapshot failed: $SNAPSHOT_ID"
+    echo "Time before failure: ${MINUTES}m ${SECONDS}s"
+    exit 1
+  fi
+
+  sleep 30
+done
+

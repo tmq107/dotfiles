@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+EXT_DIR="${HOME}/.config/pi/agent/extensions"
+PI_DISCORD="${HOME}/.config/pi/agent/extensions/pi-discord-remote"
+PI_SESSION="${HOME}/.pi/agent"
+
+if [[ ! -d "$EXT_DIR" ]]; then
+  echo "Extensions directory not found: $EXT_DIR"
+  exit 1
+fi
+
+echo "Scanning extensions in $EXT_DIR..."
+
+for dir in "$EXT_DIR"/*; do
+  if [[ -d "$dir" ]]; then
+    if [[ -d "$dir/node_modules" ]]; then
+      echo "Skipping (node_modules already exists): $dir"
+    elif [[ -f "$dir/package.json" ]]; then
+      echo "Installing dependencies in: $dir"
+      (cd "$dir" && npm install)
+    else
+      echo "Skipping (no package.json): $dir"
+    fi
+  fi
+done
+
+if [[ -d "$PI_DISCORD/node_modules" ]];then
+    echo "Build Discord Remote"
+    cd $PI_DISCORD && npm run build
+    rm -rf pi-discord
+    mv dist pi-discord
+fi
+
+if [[ ! -L "$PI_SESSION/sessions" ]]; then
+    echo "Create symlink for $PI_SESSION"
+    mkdir -p "$PI_SESSION"
+    ln -s "$HOME/.config/pi/agent/sessions" "$PI_SESSION/sessions"
+fi 
+
+echo "Done."

@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SOURCE_DIR="${HOME}/personal/dotfiles"
+HOME_DIR="${HOME}"
+CONFIG_DIR="${HOME_DIR}/.config"
+LOCAL_BIN_DIR="${HOME_DIR}/.local/bin"
+LOCAL_SHARE_DIR="${HOME_DIR}/.local/share"
+SSH_DIR="${HOME_DIR}/.ssh"
+PI_SKILLS="${CONFIG_DIR}/pi/agent/skills"
+KIRO_SKILLS="${CONFIG_DIR}/kiro/skills"
+
+echo "Starting ProSync dotfile sync..."
+
+echo "Syncing dotfiles..."
+cp -f "${SOURCE_DIR}/.envrc" "${HOME_DIR}/.envrc"
+cp -f "${SOURCE_DIR}/.aliases" "${HOME_DIR}/.aliases"
+cp -f "${SOURCE_DIR}/.p10k.zsh" "${HOME_DIR}/.p10k.zsh"
+cp -f "${SOURCE_DIR}/.zshrc" "${HOME_DIR}/.zshrc"
+cp -f "${SOURCE_DIR}/.funrc" "${HOME_DIR}/.funrc"
+
+echo "Syncing .config..."
+mkdir -p "${CONFIG_DIR}"
+cp -rf "${SOURCE_DIR}/.config/." "${CONFIG_DIR}/"
+
+echo "Copy .local binary"
+mkdir -p "${LOCAL_BIN_DIR}"
+cp -rf "${SOURCE_DIR}/.local/bin/." "${LOCAL_BIN_DIR}/"
+chmod +x "${LOCAL_BIN_DIR}/"*
+
+echo "Copy .local share"
+mkdir -p "${LOCAL_SHARE_DIR}"
+cp -rf "${SOURCE_DIR}/.local/share/." "${LOCAL_SHARE_DIR}/"
+
+echo "Syncing SSH keys..."
+mkdir -p "${SSH_DIR}"
+cp -f "${SOURCE_DIR}/.ssh/id_ed25519" "${SSH_DIR}/id_ed25519"
+cp -f "${SOURCE_DIR}/.ssh/id_ed25519.pub" "${SSH_DIR}/id_ed25519.pub"
+
+chmod 700 "${SSH_DIR}"
+chmod 600 "${SSH_DIR}/id_ed25519"
+chmod 644 "${SSH_DIR}/id_ed25519.pub"
+
+if command -v kiro-cli >/dev/null 2>&1; then
+	echo "Syncing Pi skill to Kiro"
+	mkdir -p "${KIRO_SKILLS}"
+	cp -rf "${PI_SKILLS}/." "${KIRO_SKILLS}/"
+fi
+
+echo "ProSync complete!"
+echo "Run: source ~/.zshrc"
