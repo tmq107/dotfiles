@@ -1,0 +1,36 @@
+##### K8S
+# kubectl
+alias k='kubectl'
+alias kns='kubectl config set-context --current --namespace '
+alias kimages='kubectl get pods -o jsonpath="{range .items[*]}{range .spec.initContainers[*]}{.image}{\"\n\"}{end}{range .spec.containers[*]}{.image}{\"\n\"}{end}{end}" | sort -u'
+# Switch kubectl context using fuzzy search
+alias kct='kubectl config use-context $(kubectl config get-contexts -o name | fzf)'
+
+
+##### directory
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+
+##### Alias for git
+alias gp='git pull'
+alias gl='git clone'
+alias gc='git checkout'
+alias gb='git branch'
+alias gst='git status'
+
+# Alias for alias show
+alias al='cat ~/.aliases'
+alias alf='cat ~/.funrc'
+
+##### Pi with profiles
+alias pi='AWS_PROFILE=bedrock pi'
+
+##### neovim
+alias vi='nvim'
+
+##### Kiro
+# Kiro login
+alias kiro='kiro-cli login --identity-provider https://ta-sso.awsapps.com/start --region eu-central-1'
+
