@@ -18,7 +18,7 @@ config.initial_rows = 28
 -- or, changing the font size and color scheme.
 config.font_size = 13
 
-config.color_scheme = 'Relaxed (Gogh)'
+config.color_scheme = 'catppuccin-mocha'
 -- config.window_background_opacity = 0.65
 
 config.keys = {
