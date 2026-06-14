@@ -27,14 +27,14 @@ config.keys = {
   { key = 'C', mods = 'CTRL|SHIFT', action = act.CopyTo 'Clipboard' },
 }
 
-config.background = {
-  {
-    source = {
-      File = "/home/quanthai/.config/wezterm/img/darker_unicat.png",
-    },
-    opacity = 1.0,
-  },
-}
+-- config.background = {
+--   {
+--     source = {
+--       File = "/home/quanthai/.config/wezterm/img/darker_unicat.png",
+--     },
+--     opacity = 1.0,
+--   },
+-- }
 
 -- key
 config.mouse_bindings = {
