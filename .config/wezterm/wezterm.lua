@@ -16,10 +16,18 @@ config.initial_cols = 120
 config.initial_rows = 28
 
 -- or, changing the font size and color scheme.
-config.font_size = 13
+config.font_size = 13.0
 
-config.color_scheme = 'catppuccin-mocha'
--- config.window_background_opacity = 0.65
+config.window_padding = {
+  left = 10,
+  right = 10,
+  top = 8,
+  bottom = 8,
+}
+
+config.color_scheme = 'Catppuccin Mocha (Gogh)'
+config.window_background_opacity = 0.92
+config.window_close_confirmation = "NeverPrompt"
 
 config.keys = {
   { key = 'V', mods = 'CTRL',       action = act.PasteFrom 'Clipboard' },
@@ -51,5 +59,13 @@ config.mouse_bindings = {
       action = act.CopyTo 'PrimarySelection',
     },
 }
+
+-- some custom
+-- config.enable_tab_bar = false
+-- config.window_decorations = "RESIZE"
+config.default_cursor_style = "BlinkingUnderline"
+config.cursor_thickness = 2
+config.max_fps = 120
+
 -- Finally, return the configuration to wezterm:
 return config
