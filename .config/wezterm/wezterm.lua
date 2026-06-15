@@ -30,7 +30,20 @@ config.window_background_opacity = 0.92
 config.window_close_confirmation = "NeverPrompt"
 
 config.keys = {
-  { key = 'V', mods = 'CTRL',       action = act.PasteFrom 'Clipboard' },
+  {
+      key = 'c',
+      mods = 'CTRL',
+      action = wezterm.action_callback(function(window, pane)
+        local selection = window:get_selection_text_for_pane(pane)
+
+        if selection ~= '' then
+          window:perform_action(act.CopyTo 'Clipboard', pane)
+        else
+          window:perform_action(act.SendKey { key = 'c', mods = 'CTRL' }, pane)
+        end
+      end),
+  },
+  { key = 'v', mods = 'CTRL',       action = act.PasteFrom 'Clipboard' },
   { key = 'V', mods = 'CTRL|SHIFT', action = act.PasteFrom 'Clipboard' },
   { key = 'C', mods = 'CTRL|SHIFT', action = act.CopyTo 'Clipboard' },
 }
