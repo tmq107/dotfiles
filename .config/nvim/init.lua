@@ -10,6 +10,7 @@ vim.o.foldmethod = "expr"
 vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.o.foldenable = true
 vim.o.foldlevel = 99
+vim.o.updatetime = 500
 
 -- Custom fold expressions for languages without bundled treesitter parsers
 require("folds")
@@ -447,6 +448,68 @@ vim.schedule(function()
     map("n", "<leader>d", MiniDiff.toggle_overlay, { desc = "Toggle diff overlay" })
     map("n", "<leader>da", MiniDiff.operator, { desc = "Apply hunk" })
     map("n", "<leader>dr", function() MiniDiff.operator("reset") end, { desc = "Reset hunk" })
+
+    -- Inline git blame (GitLens-style)
+    local blame_ns = vim.api.nvim_create_namespace("mini_git_blame")
+    local blame_enabled = true
+
+    local function show_blame()
+        local buf = vim.api.nvim_get_current_buf()
+        local file = vim.api.nvim_buf_get_name(buf)
+        if file == "" or vim.bo[buf].buftype ~= "" then return end
+        local line = vim.api.nvim_win_get_cursor(0)[1]
+        vim.system(
+            { "git", "blame", "-L", line .. "," .. line, "--porcelain", file },
+            { text = true },
+            function(out)
+                if out.code ~= 0 or not out.stdout then return end
+                local author, time_str, summary = "", "", ""
+                for _, l in ipairs(vim.split(out.stdout, "\n")) do
+                    if l:match("^author ") then
+                        author = l:sub(8)
+                    elseif l:match("^author%-time ") then
+                        local ts = tonumber(l:sub(13))
+                        if ts then time_str = os.date("%Y-%m-%d", ts) end
+                    elseif l:match("^summary ") then
+                        summary = l:sub(9)
+                    end
+                end
+                if author == "" or author == "Not Committed Yet" then return end
+                local text = string.format("  %s • %s • %s", author, time_str, summary)
+                vim.schedule(function()
+                    if not vim.api.nvim_buf_is_valid(buf) then return end
+                    vim.api.nvim_buf_clear_namespace(buf, blame_ns, 0, -1)
+                    vim.api.nvim_buf_set_extmark(buf, blame_ns, line - 1, 0, {
+                        virt_text = { { text, "Comment" } },
+                        virt_text_pos = "eol",
+                        priority = 100,
+                    })
+                end)
+            end
+        )
+    end
+
+    vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+        callback = function()
+            if blame_enabled then show_blame() end
+        end,
+    })
+
+    vim.api.nvim_create_autocmd("BufLeave", {
+        callback = function()
+            vim.api.nvim_buf_clear_namespace(0, blame_ns, 0, -1)
+        end,
+    })
+
+    map("n", "<leader>gb", function()
+        blame_enabled = not blame_enabled
+        if not blame_enabled then
+            vim.api.nvim_buf_clear_namespace(0, blame_ns, 0, -1)
+            vim.notify("Git blame: OFF", vim.log.levels.INFO)
+        else
+            vim.notify("Git blame: ON", vim.log.levels.INFO)
+        end
+    end, { desc = "Toggle git blame" })
 
     -- Navigation
     map("n", "<leader><Up>", "gg", { desc = "Go to first line" })
