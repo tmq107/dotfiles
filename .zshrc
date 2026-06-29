@@ -53,3 +53,5 @@ _task() {
 }
 
 compdef _task task
+
+eval "$(direnv hook zsh)"
