@@ -10,6 +10,43 @@ SSH_DIR="${HOME_DIR}/.ssh"
 PI_SKILLS="${HOME}/personal/pi-agent/agent/skills"
 KIRO_SKILLS="${CONFIG_DIR}/kiro/skills"
 
+sync_nvim_lock() {
+	local real_lock="${CONFIG_DIR}/nvim/nvim-pack-lock.json"
+	local repo_lock="${SOURCE_DIR}/.config/nvim/nvim-pack-lock.json"
+	mkdir -p "${CONFIG_DIR}/nvim" "${SOURCE_DIR}/.config/nvim"
+
+	if [[ ! -f "${repo_lock}" && -f "${real_lock}" ]]; then
+		cp -fp "${real_lock}" "${repo_lock}"
+		echo "  nvim lock: seeded dotfiles from real"
+		return
+	fi
+	if [[ ! -f "${real_lock}" && -f "${repo_lock}" ]]; then
+		cp -fp "${repo_lock}" "${real_lock}"
+		echo "  nvim lock: seeded real from dotfiles"
+		return
+	fi
+	if [[ ! -f "${real_lock}" && ! -f "${repo_lock}" ]]; then
+		echo "  nvim lock: none yet, skipping"
+		return
+	fi
+
+	if cmp -s "${real_lock}" "${repo_lock}"; then
+		echo "  nvim lock: in sync"
+		return
+	fi
+
+	if [[ "${real_lock}" -nt "${repo_lock}" ]]; then
+		cp -fp "${real_lock}" "${repo_lock}"
+		echo "  nvim lock: real -> dotfiles (real newer)"
+	elif [[ "${repo_lock}" -nt "${real_lock}" ]]; then
+		cp -fp "${repo_lock}" "${real_lock}"
+		echo "  nvim lock: dotfiles -> real (dotfiles newer)"
+	else
+		cp -fp "${real_lock}" "${repo_lock}"
+		echo "  nvim lock: real -> dotfiles (content differed, equal mtime)"
+	fi
+}
+
 echo "Starting ProSync dotfile sync..."
 
 echo "Syncing dotfiles..."
@@ -18,6 +55,9 @@ cp -f "${SOURCE_DIR}/.aliases" "${HOME_DIR}/.aliases"
 cp -f "${SOURCE_DIR}/.p10k.zsh" "${HOME_DIR}/.p10k.zsh"
 cp -f "${SOURCE_DIR}/.zshrc" "${HOME_DIR}/.zshrc"
 cp -f "${SOURCE_DIR}/.funrc" "${HOME_DIR}/.funrc"
+
+echo "Syncing nvim lock (two-way, newest wins)..."
+sync_nvim_lock
 
 echo "Syncing .config..."
 mkdir -p "${CONFIG_DIR}"
