@@ -54,6 +54,13 @@ sidebar:
       - { label: gitrepositories, resource: gitrepositories.source.toolkit.fluxcd.io  }
       - { label: helmreleases, resource: helmreleases.helm.toolkit.fluxcd.io  }
       - { label: kustomizations, resource: kustomizations.kustomize.toolkit.fluxcd.io  }
+  - section: GatewayAdvanced
+    items:
+      - { label: backends, resource: backends.gateway.kgateway.dev }
+      - { label: backendconfigpolicies, resource: backendconfigpolicies.gateway.kgateway.dev }
+      - { label: gatewayextensions, resource: gatewayextensions.gateway.kgateway.dev  }
+      - { label: trafficpolicies, resource: trafficpolicies.gateway.kgateway.dev  }
+      - { label: referencegrants, resource: referencegrants.gateway.networking.k8s.io  }
 
 # Opt-in examples: uncomment and add under the relevant section's items:
 #   - { label: HPAs, resource: horizontalpodautoscalers }
