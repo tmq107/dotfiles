@@ -213,8 +213,8 @@ accent = "#f5c2e7"
 # herdr = show in-app toasts
 # terminal = ask the outer terminal to show a desktop notification
 # system = ask the OS notification service directly
-# delivery = "off"
-# delay_seconds = 1
+delivery = "system"
+delay_seconds = 1
 
 [ui.toast.herdr]
 # position = "bottom-right"
@@ -225,7 +225,7 @@ accent = "#f5c2e7"
 
 # Play sounds when agents change state in background workspaces
 [ui.sound]
-# enabled = true
+enabled = false
 # Optional custom mp3 sound files. Relative paths are resolved from this config file's directory.
 # path = "sounds/notification.mp3"   # one mp3 file for all sound notifications
 # done_path = "sounds/done.mp3"      # overrides only finished notifications

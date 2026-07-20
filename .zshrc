@@ -52,6 +52,11 @@ _task() {
   _files "$@"
 }
 
+# SSH Agent
+if [ -z "$SSH_AUTH_SOCK" ]; then
+    eval "$(ssh-agent -s)" > /dev/null 2>&1
+fi
+
 compdef _task task
 
 eval "$(direnv hook zsh)"
