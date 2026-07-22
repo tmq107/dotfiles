@@ -35,10 +35,6 @@
 ## Navigation
 | Key | Action |
 |-----|--------|
-| `Ctrl+Left` | Focus left pane |
-| `Ctrl+Right` | Focus right pane |
-| `Ctrl+Up` | Focus upper pane |
-| `Ctrl+Down` | Focus lower pane |
 | `Prefix + Left` | Focus left pane |
 | `Prefix + Right` | Focus right pane |
 | `Prefix + Up` | Focus upper pane |
