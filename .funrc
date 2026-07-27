@@ -46,13 +46,18 @@ awspro() {
 
 mdr() {
   local root="${1:-.}"
-  local file
+  local selected
+  local -a files
 
-  file=$(fd --type f --hidden --follow --exclude .git -e md -e markdown . "$root" \
-    | fzf --prompt="Markdown: " \
-          --preview 'bat --style=plain --color=always --line-range=:200 {}') || return
+  selected=$(
+    fd --type f --hidden --follow --exclude .git -e md -e markdown . "$root" |
+      fzf -m --prompt="Markdown: " \
+            --preview 'bat --style=plain --color=always --line-range=:200 {}'
+  ) || return
 
-  mdterm "$file"
+  [[ -z "$selected" ]] && return
+  files=("${(@f)selected}")
+  mdterm "${files[@]}"
 }
 
 
