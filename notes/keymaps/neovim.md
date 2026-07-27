@@ -140,18 +140,11 @@
 | `gT` | Previous tab |
 | `:tabclose` | Close tab |
 
-## Folding
-| Key | Action |
-|-----|--------|
-| `za` | Toggle fold under cursor |
-| `zo` | Open fold |
-| `zc` | Close fold |
-| `zR` | Open all folds |
-| `zM` | Close all folds |
-| `zr` | Open one level |
-| `zm` | Close one level |
-
-> Treesitter-based folding for `.lua`, `.md` etc. Regex-based for `.go` and `.py` (folds on `func`/`def`/`class` lines).
+## Comment Toggle (Custom)
+| Key | Mode | Action |
+|-----|------|--------|
+| `Ctrl+/` | Normal | Toggle comment line |
+| `Ctrl+/` | Visual | Toggle comment selection |
 
 ---
 
@@ -187,30 +180,6 @@
 | `Whole workspace` | Repo root / current working dir, recursive |
 | `Open buffers` | All loaded, listed buffers |
 | `Custom folder` | Prompt for folder path, recursive |
-
-### Markview
-| Key | Action |
-|-----|--------|
-| `Space+m` | Toggle Markview splitview preview |
-
-### mini.diff (Git Diff)
-
-> Signs: `▎` added/changed, `▁` deleted.
-
-| Key | Mode | Action |
-|-----|------|--------|
-| `Space+d` | Normal | Toggle diff overlay |
-| `Space+da` | Normal | Apply hunks (operator -- select motion/range) |
-| `Space+dr` | Normal | Reset hunks (operator -- select motion/range) |
-| `]h` | Normal | Next hunk |
-| `[h` | Normal | Previous hunk |
-| `]H` | Normal | Last hunk |
-| `[H` | Normal | First hunk |
-| `gh` | Normal/Visual | Apply hunks in region (operator) |
-| `gH` | Normal/Visual | Reset hunks in region (operator) |
-| `gh` | Operator | Hunk range text object |
-
-> Note: `Space+d` and `Space+da`/`Space+dr` share a prefix -- Neovim resolves via `timeoutlen`. Type faster or increase `timeoutlen` if `Space+da`/`Space+dr` mis-fire.
 
 ### Neo-tree (File Explorer)
 | Key | Action |
@@ -249,5 +218,4 @@
 | Key | Mode | Action |
 |-----|------|--------|
 | `Ctrl+\` | Normal | Toggle float terminal open/close |
-| `Ctrl+\` | Terminal | Close terminal |
 | `Esc` | Terminal | Exit terminal insert mode (back to normal) |

@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SOURCE_DIR="${HOME}/personal/dotfiles"
+LOCK_FILE="${SOURCE_DIR}/.config/nvim/nvim-pack-lock.json"
+PACK_DIR="${HOME}/.local/share/nvim/site/pack/core/opt"
+APPLY=false
+
+if [[ "${1:-}" == "--apply" ]]; then
+  APPLY=true
+fi
+
+if [[ ! -f "${LOCK_FILE}" ]]; then
+  echo "nvimpackclean: lock file missing: ${LOCK_FILE}" >&2
+  exit 1
+fi
+
+if [[ ! -d "${PACK_DIR}" ]]; then
+  echo "nvimpackclean: pack dir missing: ${PACK_DIR}"
+  exit 0
+fi
+
+mapfile -t allowed < <(python3 - <<'PY' "${LOCK_FILE}"
+import json, sys
+with open(sys.argv[1], 'r', encoding='utf-8') as f:
+    data = json.load(f)
+for name in sorted(data.get('plugins', {}).keys()):
+    print(name)
+PY
+)
+
+declare -A keep=()
+for name in "${allowed[@]}"; do
+  keep["$name"]=1
+done
+
+stale=()
+while IFS= read -r -d '' dir; do
+  name="$(basename "$dir")"
+  if [[ -z "${keep[$name]:-}" ]]; then
+    stale+=("$dir")
+  fi
+done < <(find "${PACK_DIR}" -mindepth 1 -maxdepth 1 -type d -print0 | sort -z)
+
+if [[ ${#stale[@]} -eq 0 ]]; then
+  echo "nvimpackclean: no stale plugin dirs"
+  exit 0
+fi
+
+echo "nvimpackclean: stale plugin dirs"
+for dir in "${stale[@]}"; do
+  echo " - ${dir}"
+done
+
+if [[ "${APPLY}" != true ]]; then
+  echo "nvimpackclean: dry run only. Re-run with --apply to remove."
+  exit 0
+fi
+
+rm -rf -- "${stale[@]}"
+echo "nvimpackclean: removed ${#stale[@]} stale plugin dir(s)"

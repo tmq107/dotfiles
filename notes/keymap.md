@@ -2,7 +2,7 @@
 
 ## Index
 
-- [Neovim](keymaps/neovim.md) -- Core keymaps + all plugins (fzf-lua, Bufferline, Find & Replace, Markview, mini.diff, Neo-tree, blink.cmp, toggleterm)
+- [Neovim](keymaps/neovim.md) -- Core keymaps + active plugins (fzf-lua, Bufferline, Find & Replace, Neo-tree, blink.cmp, toggleterm)
 - [Tmux](keymaps/tmux.md)
 - [Herdr](keymaps/herdr.md)
 - [Kitty](keymaps/kitty.md)

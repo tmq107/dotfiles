@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SOURCE_DIR="${HOME}/personal/dotfiles"
+REAL_LOCK="${HOME}/.config/nvim/nvim-pack-lock.json"
+REPO_LOCK="${SOURCE_DIR}/.config/nvim/nvim-pack-lock.json"
+
+if [[ ! -f "${REAL_LOCK}" ]]; then
+  echo "nvimlocksave: real lock missing: ${REAL_LOCK}" >&2
+  exit 1
+fi
+
+mkdir -p "$(dirname "${REPO_LOCK}")"
+
+if [[ -f "${REPO_LOCK}" ]] && cmp -s "${REAL_LOCK}" "${REPO_LOCK}"; then
+  echo "nvimlocksave: already in sync"
+  exit 0
+fi
+
+cp -fp "${REAL_LOCK}" "${REPO_LOCK}"
+echo "nvimlocksave: real -> dotfiles"
