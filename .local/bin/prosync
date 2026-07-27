@@ -13,38 +13,20 @@ KIRO_SKILLS="${CONFIG_DIR}/kiro/skills"
 sync_nvim_lock() {
 	local real_lock="${CONFIG_DIR}/nvim/nvim-pack-lock.json"
 	local repo_lock="${SOURCE_DIR}/.config/nvim/nvim-pack-lock.json"
-	mkdir -p "${CONFIG_DIR}/nvim" "${SOURCE_DIR}/.config/nvim"
+	mkdir -p "${CONFIG_DIR}/nvim"
 
-	if [[ ! -f "${repo_lock}" && -f "${real_lock}" ]]; then
-		cp -fp "${real_lock}" "${repo_lock}"
-		echo "  nvim lock: seeded dotfiles from real"
-		return
-	fi
-	if [[ ! -f "${real_lock}" && -f "${repo_lock}" ]]; then
-		cp -fp "${repo_lock}" "${real_lock}"
-		echo "  nvim lock: seeded real from dotfiles"
-		return
-	fi
-	if [[ ! -f "${real_lock}" && ! -f "${repo_lock}" ]]; then
-		echo "  nvim lock: none yet, skipping"
+	if [[ ! -f "${repo_lock}" ]]; then
+		echo "  nvim lock: repo missing, skipping"
 		return
 	fi
 
-	if cmp -s "${real_lock}" "${repo_lock}"; then
+	if [[ -f "${real_lock}" ]] && cmp -s "${real_lock}" "${repo_lock}"; then
 		echo "  nvim lock: in sync"
 		return
 	fi
 
-	if [[ "${real_lock}" -nt "${repo_lock}" ]]; then
-		cp -fp "${real_lock}" "${repo_lock}"
-		echo "  nvim lock: real -> dotfiles (real newer)"
-	elif [[ "${repo_lock}" -nt "${real_lock}" ]]; then
-		cp -fp "${repo_lock}" "${real_lock}"
-		echo "  nvim lock: dotfiles -> real (dotfiles newer)"
-	else
-		cp -fp "${real_lock}" "${repo_lock}"
-		echo "  nvim lock: real -> dotfiles (content differed, equal mtime)"
-	fi
+	cp -fp "${repo_lock}" "${real_lock}"
+		echo "  nvim lock: dotfiles -> real"
 }
 
 echo "Starting ProSync dotfile sync..."
