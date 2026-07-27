@@ -44,4 +44,15 @@ awspro() {
   echo "Switched to $AWS_PROFILE and exported temporary keys."
 }
 
+mdr() {
+  local root="${1:-.}"
+  local file
+
+  file=$(fd --type f --hidden --follow --exclude .git -e md -e markdown . "$root" \
+    | fzf --prompt="Markdown: " \
+          --preview 'bat --style=plain --color=always --line-range=:200 {}') || return
+
+  mdterm "$file"
+}
+
 
