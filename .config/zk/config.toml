@@ -1,0 +1,8 @@
+[notebook]
+dir = "~/personal/notes"
+
+[alias]
+search = 'zk list --quiet --format "{{path}}" --match $@'
+read = 'zk list --quiet --format "{{rawContent}}" --limit 1 $@'
+links = 'zk list --quiet --format "{{path}}" --linked-by $@'
+backlinks = 'zk list --quiet --format "{{path}}" --link-to $@'
