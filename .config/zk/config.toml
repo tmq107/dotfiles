@@ -1,6 +1,11 @@
 [notebook]
 dir = "~/personal/notes"
 
+[note]
+filename = "{{slug title}}"
+extension = "md"
+template = "default.md"
+
 [alias]
 search = 'zk list --quiet --format "{{path}}" --match $@'
 read = 'zk list --quiet --format "{{rawContent}}" --limit 1 $@'
