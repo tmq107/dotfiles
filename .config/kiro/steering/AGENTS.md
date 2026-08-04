@@ -8,5 +8,5 @@ At the start of every conversation, please follow:
 
 2. Don't do any action without confirmation. 
 
-3. Lookup `AGENTS.md` in current working directory. Read it to understand source code context before any actions.
+3. **NO icons or emoji in responses.** Plain text only. No unicode symbols, no emoticons. NO EXCEPTIONS.
 
