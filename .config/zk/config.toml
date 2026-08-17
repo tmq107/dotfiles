@@ -5,6 +5,9 @@ dir = "~/personal/notes"
 filename = "{{slug title}}"
 extension = "md"
 template = "default.md"
+exclude = [
+  "manifest/**"
+]
 
 [alias]
 search = 'zk list --quiet --format "{{path}}" --match $@'
