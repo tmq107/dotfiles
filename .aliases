@@ -24,8 +24,7 @@ alias gst='git status'
 alias al='cat ~/.aliases'
 alias alf='cat ~/.funrc'
 
-##### Pi with profiles
-alias pi='AWS_PROFILE=bedrock pi'
+##### Pi
 alias pi-sandbox='PI_NONO_ACTIVE=1 exec -a pi nono run --profile "${HOME}/personal/pi-agent/agent/configs/nono/pi-agent.jsonc" --allow-cwd -- pi '
 
 ##### neovim
