@@ -77,6 +77,9 @@ zoom = "prefix+z"
 toggle_sidebar = "prefix+b"
 resize_mode = "prefix+shift+r"
 
+switch_workspace = "prefix+shift+1..9"
+previous_workspace = "prefix+u"
+next_workspace = "prefix+i"
 # Prefix-mode actions
 # help = "prefix+?"
 # settings = "prefix+s"
