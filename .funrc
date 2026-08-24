@@ -9,12 +9,10 @@ eksconn() {
   fi
   eval "$(aws configure export-credentials --profile "$AWS_PROFILE" --format env)"
 
-  local cluster
-  cluster=$(aws eks list-clusters --query 'clusters[]' --output text | tr '	' '
-' | fzf --prompt="EKS Cluster: ") || return
+  local region="eu-central-1"
 
-  local region
-  region=$(aws configure get region --profile "$AWS_PROFILE")
+  local cluster
+  cluster=$(aws eks list-clusters --query 'clusters[]' --region "$region" --output text | tr '	' '\n' | fzf --prompt="EKS Cluster: ") || return
 
   local kube_file="/tmp/kubeconfig-${profile}-${cluster}"
   aws eks update-kubeconfig \
