@@ -6,12 +6,10 @@ alias kimages='kubectl get pods -o jsonpath="{range .items[*]}{range .spec.initC
 # Switch kubectl context using fuzzy search
 alias kct='kubectl config use-context $(kubectl config get-contexts -o name | fzf)'
 
-
 ##### directory
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
-
 
 ##### Alias for git
 alias gp='git pull'
@@ -29,6 +27,10 @@ alias pi-sandbox='PI_NONO_ACTIVE=1 exec -a pi nono run --profile "${HOME}/person
 
 ##### neovim
 alias vi='nvim'
+
+##### tor container
+alias tor='docker run -d --name tor-proxy --restart unless-stopped -p 9050:9050 -p 8118:8118 -v tor_data:/var/lib/tor -e CHECK="true" docker.io/dockurr/tor'
+alias torstop='docker rm -f tor-proxy'
 
 ##### Kiro
 # Kiro login
