@@ -1,2 +1,3 @@
 .config/kiro/settings
+.config/sofka/clusters
 .local/bin/notify-send
